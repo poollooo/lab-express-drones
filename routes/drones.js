@@ -8,19 +8,48 @@ app.use(express.json())
 
 router.get('/drones', async (req, res, next) => {
   // Iteration #2: List the drones
-  const allDrones = await Drone.find()
-  res.json(allDrones)
-  next()
+  try {
+    const allDrones = await Drone.find()
+    res.json(allDrones)
+  } catch (error) {
+    console.log(`Error listing drones: ${error}`)
+    next(error)
+  }
 })
 
-router.post('/drones', (req, res, next) => {
+router.post('/drones', async (req, res, next) => {
   // Iteration #3: Add a new drone
-  // ... your code here
+  try {
+    const newDrone = req.body
+    const createdDrone = await Drone.create({
+      name: newDrone.name,
+      colour: newDrone.colour,
+      foot: newDrone.foot,
+    })
+    console.log('createdDrone', createdDrone)
+
+    res.status(201).json({ drone: createdDrone })
+  } catch (error) {
+    console.log(`Error listing drones: ${error}`)
+    next(error)
+    res.status(400).json({ error })
+  }
+
 })
 
-router.post('/drones/:id', (req, res, next) => {
+router.patch('/drones/:id', async (req, res, next) => {
   // Iteration #4: Update the drone
-  // ... your code here
+  const { name, propellers, maxSpeed } = req.body
+  const drone = await Drone.findByIdAndUpdate(
+    req.params.id,
+    {
+      name,
+      propellers,
+      maxSpeed
+    },
+    { new: true }
+  )
+  res.json({ drone })
 })
 
 router.delete('/drones/:id', (req, res, next) => {
