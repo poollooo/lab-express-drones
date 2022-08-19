@@ -1,11 +1,16 @@
 const express = require('express')
 const router = express.Router()
+const Drone = require('../models/Drone.model')
+const app = express()
+app.use(express.json())
 
 // require the Drone model here
 
-router.get('/drones', (req, res, next) => {
+router.get('/drones', async (req, res, next) => {
   // Iteration #2: List the drones
-  // ... your code here
+  const allDrones = await Drone.find()
+  res.json(allDrones)
+  next()
 })
 
 router.post('/drones', (req, res, next) => {
